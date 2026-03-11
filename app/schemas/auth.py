@@ -17,8 +17,7 @@ class UserResponse(UserBase):
     activo: bool
     creado_en: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class Token(BaseModel):
     access_token: str

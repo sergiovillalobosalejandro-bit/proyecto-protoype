@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
@@ -27,7 +27,7 @@ async def get_intervenciones_by_couder(
     
     return intervenciones
 
-@router.post("/", response_model=IntervencionResponse)
+@router.post("/", response_model=IntervencionResponse, status_code=status.HTTP_201_CREATED)
 async def create_intervencion(
     intervencion: IntervencionCreate,
     db: Session = Depends(get_db),

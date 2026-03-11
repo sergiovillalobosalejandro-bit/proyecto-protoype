@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import os
@@ -8,14 +8,14 @@ from pathlib import Path
 from ..core.database import get_db
 from ..core.mongodb import get_mongo_db
 from ..core.logging import logger
-from ..models import Couder, Usuario
+from ..models import Couder, Usuario, Intervencion
 from ..schemas.intervenciones import AudioRecordResponse, AudioRecordCreate
 
 # Audio storage directory
 AUDIO_STORAGE_DIR = "audio_files"
 os.makedirs(AUDIO_STORAGE_DIR, exist_ok=True)
 
-@router.post("/upload")
+@router.post("/upload", response_model=AudioRecordResponse, status_code=status.HTTP_201_CREATED)
 async def upload_audio(
     couder_id: int,
     usuario_id: int,

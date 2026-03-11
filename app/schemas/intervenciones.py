@@ -28,8 +28,28 @@ class IntervencionResponse(IntervencionBase):
     creado_en: datetime
     actualizado_en: Optional[datetime] = None
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
+
+class AudioRecordBase(BaseModel):
+    couder_id: int
+    usuario_id: int
+    titulo: Optional[str] = None
+    descripcion: Optional[str] = None
+    intervencion_id: Optional[int] = None
+    archivo_path: str
+    duracion_segundos: Optional[int] = None
+    tamano_bytes: int
+
+class AudioRecordCreate(AudioRecordBase):
+    pass
+
+class AudioRecordResponse(AudioRecordBase):
+    id: Optional[str] = None
+    fecha_grabacion: datetime
+    transcricion: Optional[str] = None
+    analisis_ai: Optional[Dict[str, Any]] = None
+    
+    model_config = {"from_attributes": True}
 
 class ClinicalHistoryRecord(BaseModel):
     _id: Optional[str] = None

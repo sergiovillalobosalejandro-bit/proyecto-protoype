@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import datetime, date
 import re
@@ -13,19 +13,22 @@ class CouderBase(BaseModel):
     direccion: Optional[str] = None
     clan_id: int
     
-    @validator('cc')
+    @field_validator('cc')
+    @classmethod
     def validate_cc(cls, v):
         if not re.match(r'^\d{6,12}$', v):
             raise ValueError('CC debe contener solo números (6-12 dígitos)')
         return v
     
-    @validator('nombre_completo')
+    @field_validator('nombre_completo')
+    @classmethod
     def validate_nombre_completo(cls, v):
         if len(v.strip()) < 3:
             raise ValueError('Nombre completo debe tener al menos 3 caracteres')
         return v.strip()
     
-    @validator('telefono')
+    @field_validator('telefono')
+    @classmethod
     def validate_telefono(cls, v):
         if v and not re.match(r'^\d{7,15}$', v):
             raise ValueError('Teléfono debe contener solo números (7-15 dígitos)')
@@ -52,8 +55,7 @@ class CouderResponse(CouderBase):
     activo: bool
     creado_en: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class ClanBase(BaseModel):
     id: int
@@ -61,30 +63,29 @@ class ClanBase(BaseModel):
     jornada: str
     capacidad_maxima: int
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class CorteBase(BaseModel):
     id: int
     nombre: str
+    tipo_ruta: str
     fecha_inicio: datetime
     fecha_fin: datetime
-    tipo_ruta: str
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class SedeBase(BaseModel):
     id: int
     nombre: str
-    direccion: Optional[str] = None
-    telefono: Optional[str] = None
-    email: Optional[str] = None
+    direccion: str
+    telefono: str
+    email: str
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class CouderWithDetails(CouderResponse):
     clan: Optional[ClanBase] = None
     corte: Optional[CorteBase] = None
     sede: Optional[SedeBase] = None
+    
+    model_config = {"from_attributes": True}

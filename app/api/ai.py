@@ -1,14 +1,30 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional, Dict, Any
+from pydantic import BaseModel
 from ..core.database import get_db
 from ..core.mongodb import get_mongo_db
 from ..services.ai_service import ai_service
 from ..models import Couder, Intervencion
 
+# Response models for AI endpoints
+class SynthesisResponse(BaseModel):
+    resumen: str
+    puntos_clave: List[str]
+    diagnostico_preliminar: str
+    sugerencias: List[str]
+    nivel_riesgo: str
+    recomendaciones: List[str]
+
+class DiagnosisResponse(BaseModel):
+    diagnostico: str
+    nivel_riesgo: str
+    recomendaciones: List[str]
+    proximos_pasos: List[str]
+
 router = APIRouter()
 
-@router.post("/synthesize/{couder_id}")
+@router.post("/synthesize/{couder_id}", response_model=SynthesisResponse)
 async def synthesize_interventions(
     couder_id: int,
     intervention_ids: List[int],
@@ -36,7 +52,7 @@ async def synthesize_interventions(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI synthesis failed: {str(e)}")
 
-@router.post("/diagnose/{couder_id}")
+@router.post("/diagnose/{couder_id}", response_model=DiagnosisResponse)
 async def generate_diagnosis(
     couder_id: int,
     intervention_ids: List[int],
