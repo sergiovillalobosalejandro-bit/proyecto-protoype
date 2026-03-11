@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Registro de Intervenciones Clínicas</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1><i class="fas fa-heartbeat"></i> Sistema de Intervenciones Clínicas</h1>
+                <nav class="nav">
+                    <a href="#" onclick="showView('dashboard')" class="nav-link active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="#" onclick="showView('search')" class="nav-link">
+                        <i class="fas fa-search"></i> Buscar Couder
+                    </a>
+                    <a href="#" onclick="showView('clinical')" class="nav-link">
+                        <i class="fas fa-notes-medical"></i> Historial Clínico
+                    </a>
+                    <button onclick="logout()" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="view active">
+                    <h2><i class="fas fa-chart-line"></i> Dashboard General</h2>
+                    
+                    <!-- Metrics Overview -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon blue">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="total-couders">-</h3>
+                                <p>Total Couders</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon green">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="activos-couders">-</h3>
+                                <p>Activos</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon orange">
+                                <i class="fas fa-user-times"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="retirados-couders">-</h3>
+                                <p>Retirados</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon purple">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="completados-couders">-</h3>
+                                <p>Completados</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sedes Section -->
+                    <div class="section">
+                        <h3><i class="fas fa-building"></i> Sedes</h3>
+                        <div id="sedes-container" class="cards-grid">
+                            <!-- Sedes will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search View -->
+                <div id="search-view" class="view">
+                    <h2><i class="fas fa-search"></i> Buscar Couder</h2>
+                    
+                    <div class="search-form">
+                        <div class="form-group">
+                            <label for="cc-search">Buscar por CC:</label>
+                            <div class="input-group">
+                                <input type="text" id="cc-search" placeholder="Ingrese el número de cédula">
+                                <button onclick="searchCouder()" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="search-results" class="search-results">
+                        <!-- Search results will appear here -->
+                    </div>
+                </div>
+
+                <!-- Clinical History View -->
+                <div id="clinical-view" class="view">
+                    <h2><i class="fas fa-notes-medical"></i> Historial Clínico</h2>
+                    
+                    <div id="couder-info" class="couder-info">
+                        <!-- Couder basic info will appear here -->
+                    </div>
+
+                    <div class="clinical-tabs">
+                        <button onclick="showTab('interventions')" class="tab-btn active">
+                            <i class="fas fa-clipboard-list"></i> Intervenciones
+                        </button>
+                        <button onclick="showTab('ai-analysis')" class="tab-btn">
+                            <i class="fas fa-brain"></i> Análisis IA
+                        </button>
+                        <button onclick="showTab('audio')" class="tab-btn">
+                            <i class="fas fa-microphone"></i> Audio
+                        </button>
+                    </div>
+
+                    <!-- Interventions Tab -->
+                    <div id="interventions-tab" class="tab-content active">
+                        <div class="section-header">
+                            <h3>Registro de Intervenciones</h3>
+                            <button onclick="showInterventionForm()" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Nueva Intervención
+                            </button>
+                        </div>
+                        
+                        <div id="interventions-list" class="interventions-list">
+                            <!-- Interventions will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- AI Analysis Tab -->
+                    <div id="ai-analysis-tab" class="tab-content">
+                        <div class="section-header">
+                            <h3>Análisis con IA</h3>
+                            <div class="btn-group">
+                                <button onclick="generateSynthesis()" class="btn btn-primary">
+                                    <i class="fas fa-magic"></i> Sintetizar
+                                </button>
+                                <button onclick="generateDiagnosis()" class="btn btn-secondary">
+                                    <i class="fas fa-stethoscope"></i> Diagnóstico
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="ai-analyses-list" class="ai-analyses-list">
+                            <!-- AI analyses will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Audio Tab -->
+                    <div id="audio-tab" class="tab-content">
+                        <div class="section-header">
+                            <h3>Grabaciones de Audio</h3>
+                            <button onclick="showAudioRecorder()" class="btn btn-primary">
+                                <i class="fas fa-microphone"></i> Nueva Grabación
+                            </button>
+                        </div>
+                        
+                        <div id="audio-list" class="audio-list">
+                            <!-- Audio recordings will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <!-- Intervention Form Modal -->
+        <div id="intervention-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-plus"></i> Nueva Intervención</h3>
+                    <button onclick="closeModal('intervention-modal')" class="close-btn">&times;</button>
+                </div>
+                <form id="intervention-form" onsubmit="saveIntervention(event)">
+                    <div class="form-group">
+                        <label for="intervention-title">Título:</label>
+                        <input type="text" id="intervention-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="intervention-description">Descripción:</label>
+                        <textarea id="intervention-description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="intervention-observations">Observaciones:</label>
+                        <textarea id="intervention-observations" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="intervention-date">Fecha y Hora:</label>
+                        <input type="datetime-local" id="intervention-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="intervention-duration">Duración (minutos):</label>
+                        <input type="number" id="intervention-duration" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="intervention-type">Tipo de Intervención:</label>
+                        <select id="intervention-type">
+                            <option value="">Seleccionar...</option>
+                            <option value="individual">Individual</option>
+                            <option value="grupal">Grupal</option>
+                            <option value="familiar">Familiar</option>
+                            <option value="crisis">Crisis</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="closeModal('intervention-modal')" class="btn btn-secondary">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/couder.js"></script>
+    <script src="js/interventions.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
