@@ -28,7 +28,7 @@ function showLoginForm() {
         <div class="login-container">
             <div class="login-card">
                 <div class="login-header">
-                    <h2><i class="fas fa-heartbeat"></i> Sistema de Intervenciones Clínicas</h2>
+                    <h2><i class="fas fa-heartbeat"></i> RIWI - Sistema de Intervenciones</h2>
                     <p>Iniciar sesión</p>
                 </div>
                 <form id="login-form" onsubmit="handleLogin(event)">

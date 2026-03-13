@@ -8,7 +8,7 @@ class Jornada(enum.Enum):
     AM = "AM"
     PM = "PM"
 
-class Clan(Base):
+class LegacyClan(Base):
     __tablename__ = "clanes"
     
     id = Column(Integer, primary_key=True, index=True)

@@ -97,7 +97,7 @@ function displayCouderSearchResult(couder) {
             
             <div class="couder-actions">
                 <button onclick="viewClinicalHistory(${couder.id})" class="btn btn-primary">
-                    <i class="fas fa-notes-medical"></i> Ver Historial Clínico
+                    <i class="fas fa-notes-medical"></i> Ver Intervenciones
                 </button>
                 <button onclick="editCouder(${couder.id})" class="btn btn-secondary">
                     <i class="fas fa-edit"></i> Editar
@@ -180,7 +180,7 @@ async function loadClinicalHistory() {
         hideLoading();
     } catch (error) {
         hideLoading();
-        showError('Error al cargar historial clínico: ' + error.message);
+        showError('Error al cargar intervenciones: ' + error.message);
     }
 }
 

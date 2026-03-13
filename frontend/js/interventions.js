@@ -25,7 +25,7 @@ function displayInterventions() {
             <div class="empty-state">
                 <i class="fas fa-clipboard-list"></i>
                 <h3>No hay intervenciones registradas</h3>
-                <p>Este couder aún no tiene intervenciones en su historial clínico.</p>
+                <p>Este couder aún no tiene intervenciones registradas.</p>
                 <button onclick="showInterventionForm()" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Primera Intervención
                 </button>

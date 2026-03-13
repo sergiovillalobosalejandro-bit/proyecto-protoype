@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIWI - Sistema Completo de Intervenciones</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-card h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Main App Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info span {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .data-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .data-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .data-card h4 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .data-card p {
+            color: #6c757d;
+            margin: 6px 0;
+            font-size: 0.9em;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8em;
+            width: auto;
+        }
+
+        .btn-edit {
+            background: #28a745;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <h2><i class="fas fa-heartbeat"></i> RIWI Sistema</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+            </form>
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 0.9em;">
+                <strong>Usuarios de demo:</strong><br>
+                Admin: admin / admin123<br>
+                Specialist: specialist / spec123<br>
+                Viewer: viewer / view123
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="container hidden">
+        <div class="header">
+            <h1><i class="fas fa-heartbeat"></i> RIWI - Sistema de Intervenciones</h1>
+            <div class="user-info">
+                <span id="userInfo"></span>
+                <button class="btn btn-small" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="nav-tab" onclick="showTab('campus')">
+                <i class="fas fa-building"></i> Campus
+            </button>
+            <button class="nav-tab" onclick="showTab('cohorts')">
+                <i class="fas fa-graduation-cap"></i> Cohorts
+            </button>
+            <button class="nav-tab" onclick="showTab('clans')">
+                <i class="fas fa-users"></i> Clans
+            </button>
+            <button class="nav-tab" onclick="showTab('coders')">
+                <i class="fas fa-laptop-code"></i> Coders
+            </button>
+            <button class="nav-tab" onclick="showTab('specialists')">
+                <i class="fas fa-user-md"></i> Specialists
+            </button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="total-campus">-</div>
+                    <div class="metric-label">Campus</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="total-cohorts">-</div>
+                    <div class="metric-label">Cohorts</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="total-clans">-</div>
+                    <div class="metric-label">Clans</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="total-coders">-</div>
+                    <div class="metric-label">Coders</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="total-specialists">-</div>
+                    <div class="metric-label">Specialists</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campus Tab -->
+        <div id="campus" class="tab-content">
+            <div class="data-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-building"></i> Campus</h3>
+                    <button class="btn btn-small" onclick="openModal('campusModal')">
+                        <i class="fas fa-plus"></i> Nuevo Campus
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="campusSearch" placeholder="Buscar campus..." onkeyup="filterData('campus')">
+                </div>
+                <div id="campus-data" class="data-grid"></div>
+            </div>
+        </div>
+
+        <!-- Other tabs would follow similar pattern... -->
+        <div id="cohorts" class="tab-content">
+            <div class="data-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-graduation-cap"></i> Cohorts</h3>
+                    <button class="btn btn-small" onclick="openModal('cohortModal')">
+                        <i class="fas fa-plus"></i> Nuevo Cohort
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="cohortSearch" placeholder="Buscar cohorts..." onkeyup="filterData('cohorts')">
+                </div>
+                <div id="cohorts-data" class="data-grid"></div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="campusModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('campusModal')">&times;</span>
+                <h2><i class="fas fa-building"></i> Nuevo Campus</h2>
+                <form id="campusForm">
+                    <div class="form-group">
+                        <label for="campusName">Nombre del Campus:</label>
+                        <input type="text" id="campusName" required>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Guardar</button>
+                        <button type="button" class="btn" onclick="closeModal('campusModal')">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="message" class="hidden"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = null;
+        let allData = {};
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    authToken = data.access_token;
+                    currentUser = { username, role: data.user_role };
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    document.getElementById('userInfo').textContent = `${currentUser.username} (${currentUser.role})`;
+                    
+                    loadAllData();
+                } else {
+                    showMessage('Credenciales incorrectas', 'error');
+                }
+            } catch (error) {
+                showMessage('Error de conexión', 'error');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            authToken = null;
+            currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        // Tab navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // API calls with authentication
+        async function fetchData(endpoint) {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch(`${API_BASE}/${endpoint}`, { headers });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching ${endpoint}:`, error);
+                return null;
+            }
+        }
+
+        async function postData(endpoint, data) {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch(`${API_BASE}/${endpoint}`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error(`Error posting ${endpoint}:`, error);
+                return null;
+            }
+        }
+
+        async function deleteData(endpoint) {
+            try {
+                const headers = {};
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch(`${API_BASE}/${endpoint}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return true;
+            } catch (error) {
+                console.error(`Error deleting ${endpoint}:`, error);
+                return false;
+            }
+        }
+
+        // Load and display data
+        async function loadAllData() {
+            const [campus, cohorts, clans, coders, specialists] = await Promise.all([
+                fetchData('campus'),
+                fetchData('cohorts'),
+                fetchData('clans'),
+                fetchData('coders'),
+                fetchData('specialists')
+            ]);
+
+            allData = { campus, cohorts, clans, coders, specialists };
+
+            // Update metrics
+            document.getElementById('total-campus').textContent = campus?.length || 0;
+            document.getElementById('total-cohorts').textContent = cohorts?.length || 0;
+            document.getElementById('total-clans').textContent = clans?.length || 0;
+            document.getElementById('total-coders').textContent = coders?.length || 0;
+            document.getElementById('total-specialists').textContent = specialists?.length || 0;
+
+            // Display data
+            displayCampus(campus);
+            displayCohorts(cohorts);
+        }
+
+        function displayCampus(data) {
+            const container = document.getElementById('campus-data');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="error">No se encontraron datos</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(campus => `
+                <div class="data-card">
+                    <h4><i class="fas fa-building"></i> ${campus.campus_name}</h4>
+                    <p><strong>ID:</strong> ${campus.id_campus}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-small btn-edit" onclick="editCampus(${campus.id_campus})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-small btn-delete" onclick="deleteCampus(${campus.id_campus})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayCohorts(data) {
+            const container = document.getElementById('cohorts-data');
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="error">No se encontraron datos</div>';
+                return;
+            }
+
+            container.innerHTML = data.map(cohort => `
+                <div class="data-card">
+                    <h4><i class="fas fa-graduation-cap"></i> ${cohort.name_cohort}</h4>
+                    <p><strong>Estado:</strong> ${cohort.status}</p>
+                    <p><strong>Inicio:</strong> ${cohort.start_date}</p>
+                    <p><strong>Campus:</strong> ${cohort.campus?.campus_name || 'N/A'}</p>
+                </div>
+            `).join('');
+        }
+
+        // CRUD operations
+        async function createCampus() {
+            const name = document.getElementById('campusName').value;
+            if (!name) return;
+
+            const result = await postData('campus', { campus_name: name });
+            if (result) {
+                showMessage('Campus creado exitosamente', 'success');
+                closeModal('campusModal');
+                document.getElementById('campusForm').reset();
+                loadAllData();
+            } else {
+                showMessage('Error al crear campus', 'error');
+            }
+        }
+
+        async function deleteCampus(id) {
+            if (!confirm('¿Estás seguro de eliminar este campus?')) return;
+
+            const result = await deleteData(`campus/${id}`);
+            if (result) {
+                showMessage('Campus eliminado exitosamente', 'success');
+                loadAllData();
+            } else {
+                showMessage('Error al eliminar campus', 'error');
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Message display
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = message;
+            messageEl.className = type;
+            messageEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Filter functionality
+        function filterData(type) {
+            const searchTerm = document.getElementById(`${type}Search`).value.toLowerCase();
+            const data = allData[type];
+            
+            if (!data) return;
+
+            const filtered = data.filter(item => {
+                if (type === 'campus') {
+                    return item.campus_name.toLowerCase().includes(searchTerm);
+                }
+                if (type === 'cohorts') {
+                    return item.name_cohort.toLowerCase().includes(searchTerm) ||
+                           item.status.toLowerCase().includes(searchTerm);
+                }
+                return true;
+            });
+
+            if (type === 'campus') displayCampus(filtered);
+            if (type === 'cohorts') displayCohorts(filtered);
+        }
+
+        // Initialize
+        document.getElementById('campusForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            createCampus();
+        });
+
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('authToken');
+            const savedUser = localStorage.getItem('currentUser');
+            
+            if (savedToken && savedUser) {
+                authToken = savedToken;
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('userInfo').textContent = `${currentUser.username} (${currentUser.role})`;
+                loadAllData();
+            }
+        });
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

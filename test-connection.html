@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Conexión Frontend-Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            white-space: pre-wrap;
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔗 Test de Conexión Frontend-Backend</h1>
+    
+    <div class="test-section info">
+        <h3>Configuración</h3>
+        <p><strong>URL del Backend:</strong> <span id="backend-url"></span></p>
+        <p><strong>Estado del Servidor:</strong> <span id="server-status">Verificando...</span></p>
+    </div>
+
+    <div class="test-section">
+        <h3>Pruebas de Conexión</h3>
+        <button onclick="testHealthCheck()">1. Health Check</button>
+        <button onclick="testRootEndpoint()">2. Root Endpoint</button>
+        <button onclick="testDocs()">3. API Documentation</button>
+        <button onclick="testAuthEndpoint()">4. Auth Endpoint (sin token)</button>
+        <button onclick="testCoudersEndpoint()">5. Couders Endpoint</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Resultados</h3>
+        <div id="results">Esperando pruebas...</div>
+    </div>
+
+    <script type="module">
+        // Import configuration
+        import CONFIG from './frontend/js/config.js';
+
+        // Display backend URL
+        document.getElementById('backend-url').textContent = CONFIG.API_BASE_URL;
+
+        // Results container
+        const resultsDiv = document.getElementById('results');
+        
+        // Log function
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            resultsDiv.textContent += logEntry;
+            resultsDiv.className = type;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+            console.log(message);
+        }
+
+        // Test functions
+        async function testHealthCheck() {
+            log('🔍 Probando Health Check...', 'info');
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                log(`✅ Health Check exitoso: ${JSON.stringify(data)}`, 'success');
+                document.getElementById('server-status').textContent = '✅ Online';
+                document.getElementById('server-status').style.color = 'green';
+            } catch (error) {
+                log(`❌ Error en Health Check: ${error.message}`, 'error');
+                document.getElementById('server-status').textContent = '❌ Offline';
+                document.getElementById('server-status').style.color = 'red';
+            }
+        }
+
+        async function testRootEndpoint() {
+            log('🔍 Probando Root Endpoint...', 'info');
+            try {
+                const response = await fetch('http://localhost:8000/');
+                const data = await response.json();
+                log(`✅ Root endpoint exitoso: ${JSON.stringify(data)}`, 'success');
+            } catch (error) {
+                log(`❌ Error en Root endpoint: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDocs() {
+            log('🔍 Probando API Documentation...', 'info');
+            try {
+                const response = await fetch('http://localhost:8000/docs');
+                log(`✅ Docs endpoint exitoso: Status ${response.status}`, 'success');
+            } catch (error) {
+                log(`❌ Error en Docs endpoint: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAuthEndpoint() {
+            log('🔍 Probando Auth Endpoint (sin token)...', 'info');
+            try {
+                const response = await fetch('http://localhost:8000/api/auth/me');
+                const data = await response.json();
+                if (response.status === 401) {
+                    log(`✅ Auth endpoint funcionando correctamente (401 - sin token): ${JSON.stringify(data)}`, 'success');
+                } else {
+                    log(`⚠️ Respuesta inesperada: ${response.status} - ${JSON.stringify(data)}`, 'info');
+                }
+            } catch (error) {
+                log(`❌ Error en Auth endpoint: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCoudersEndpoint() {
+            log('🔍 Probando Couders Endpoint...', 'info');
+            try {
+                const response = await fetch('http://localhost:8000/api/couders/');
+                const data = await response.json();
+                if (response.status === 500) {
+                    log(`✅ Couders endpoint respondiendo (500 - sin DB): ${JSON.stringify(data)}`, 'success');
+                } else {
+                    log(`⚠️ Respuesta inesperada: ${response.status} - ${JSON.stringify(data)}`, 'info');
+                }
+            } catch (error) {
+                log(`❌ Error en Couders endpoint: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run health check on load
+        window.addEventListener('load', () => {
+            log('🚀 Iniciando pruebas de conexión...', 'info');
+            setTimeout(testHealthCheck, 1000);
+        });
+
+        // Make functions global for button onclick
+        window.testHealthCheck = testHealthCheck;
+        window.testRootEndpoint = testRootEndpoint;
+        window.testDocs = testDocs;
+        window.testAuthEndpoint = testAuthEndpoint;
+        window.testCoudersEndpoint = testCoudersEndpoint;
+    </script>
+</body>
+</html>

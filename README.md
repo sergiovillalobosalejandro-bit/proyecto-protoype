@@ -1,34 +1,35 @@
-# Clinical Intervention Tracking System
+# RIWI - Sistema de Intervenciones de Couders
 
-A comprehensive system for tracking individual clinical interventions with couders in educational programs, built with **FastAPI** and modern web technologies.
+Un sistema integral para el registro y seguimiento de intervenciones individuales de couders en programas educativos, desarrollado para la empresa **RIWI** y construido con **FastAPI** y tecnologías web modernas.
 
 ## 🚀 **Features**
 
-- **🔍 Individual Couder Clinical History**: Search by CC and view complete intervention history
-- **🤖 AI-Powered Analysis**: Generate synthesis and mini-diagnoses using OpenAI integration
-- **📊 Multi-Level Dashboard**: Navigate through sede → corte → clan → couder metrics
-- **🎵 Audio Recording**: Record and transcribe interventions with validation
-- **📈 Real-time Metrics**: Track progress, dropouts, and completion rates
-- **📝 Clinical Records Management**: Complete intervention tracking with timestamps
-- **🔐 Secure Authentication**: JWT-based authentication with role-based access
+- **🔍 Seguimiento Individual de Couders**: Buscar por CC y ver historial completo de intervenciones
+- **🤖 Análisis con IA**: Generar síntesis y mini-diagnósticos usando integración con OpenAI
+- **📊 Dashboard Multi-Nivel**: Navegar por sede → corte → clan → métricas de couder
+- **🎵 Grabación de Audio**: Grabar y transcribir intervenciones con validación
+- **📈 Métricas en Tiempo Real**: Seguimiento de progreso, abandonos y tasas de finalización
+- **📝 Gestión de Registros Clínicos**: Seguimiento completo de intervenciones con timestamps
+- **🔐 Autenticación Segura**: Autenticación basada en JWT con acceso por roles
 - **⚡ High Performance**: Optimized queries and connection pooling
 
 ## 🛠 **Technology Stack**
 
-### **Backend (FastAPI)**
-- **Framework**: FastAPI 0.104.1+ with Python 3.8+
-- **Database**: PostgreSQL 12+ with SQLAlchemy 2.0+ ORM
-- **Document Store**: MongoDB 4.4+ with PyMongo
-- **Authentication**: JWT tokens with OAuth2
-- **Validation**: Pydantic v2 schemas
+### **Backend (FastAPI para RIWI)**
+- **Framework**: FastAPI 0.104.1+ con Python 3.8+
+- **Database**: PostgreSQL 12+ con SQLAlchemy 2.0+ ORM
+- **Document Store**: MongoDB 4.4+ con PyMongo
+- **Authentication**: Tokens JWT con OAuth2
+- **Validation**: Schemas Pydantic v2
 - **AI Integration**: OpenAI GPT-4 API
-- **File Storage**: Local filesystem with validation
+- **File Storage**: Sistema de archivos local con validación
 
-### **Frontend**
+### **Frontend para RIWI**
 - **Framework**: Vanilla JavaScript (ES6+)
-- **Styling**: Modern CSS with responsive design
-- **Audio**: Web Audio API for recording
-- **Architecture**: Modular JavaScript with ES6 modules
+- **Styling**: CSS moderno con diseño responsive
+- **Audio**: Web Audio API para grabación
+- **Architecture**: JavaScript modular con módulos ES6
+- **Branding**: Diseñado específicamente para RIWI
 
 ### **Infrastructure**
 - **Database Migrations**: Alembic

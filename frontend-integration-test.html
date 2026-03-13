@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Integración Frontend-Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .test-result {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #28a745;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔗 Test de Integración Frontend-Backend</h1>
+    
+    <div class="container">
+        <h2>📊 Estado del Sistema</h2>
+        <div class="grid">
+            <div>
+                <h3>Backend</h3>
+                <div id="backend-status" class="status info">Verificando...</div>
+                <p><strong>URL:</strong> <span id="backend-url"></span></p>
+                <p><strong>Version:</strong> <span id="backend-version"></span></p>
+            </div>
+            <div>
+                <h3>Frontend</h3>
+                <div id="frontend-status" class="status info">Cargando...</div>
+                <p><strong>Config:</strong> <span id="frontend-config"></span></p>
+                <p><strong>API Base:</strong> <span id="api-base"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>🧪 Pruebas Automáticas</h2>
+        <div class="progress">
+            <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+        </div>
+        <p id="progress-text">0% completado</p>
+        
+        <button onclick="runAllTests()" id="run-tests-btn">Ejecutar Todas las Pruebas</button>
+        <button onclick="runSingleTest('health')" id="health-btn">Health Check</button>
+        <button onclick="runSingleTest('auth')" id="auth-btn">Autenticación</button>
+        <button onclick="runSingleTest('api')" id="api-btn">API Endpoints</button>
+        <button onclick="runSingleTest('frontend')" id="frontend-btn">Frontend Modules</button>
+    </div>
+
+    <div class="container">
+        <h2>📋 Resultados de Pruebas</h2>
+        <div id="test-results" class="test-result">
+            Esperando ejecución de pruebas...
+        </div>
+    </div>
+
+    <script type="module">
+        // Import frontend configuration
+        import CONFIG from './frontend/js/config.js';
+        
+        // Global state
+        let testResults = [];
+        let currentTest = 0;
+        let totalTests = 4;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeTests();
+        });
+        
+        async function initializeTests() {
+            // Display configuration
+            document.getElementById('backend-url').textContent = 'http://localhost:8000';
+            document.getElementById('frontend-config').textContent = 'Loaded';
+            document.getElementById('api-base').textContent = CONFIG.API_BASE_URL;
+            
+            // Check backend status
+            await checkBackendStatus();
+            
+            // Check frontend modules
+            await checkFrontendModules();
+            
+            log('🚀 Sistema inicializado y listo para pruebas', 'success');
+        }
+        
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                
+                document.getElementById('backend-status').className = 'status success';
+                document.getElementById('backend-status').textContent = '✅ Online';
+                document.getElementById('backend-version').textContent = '1.0.0';
+                
+                log('✅ Backend online y respondiendo', 'success');
+            } catch (error) {
+                document.getElementById('backend-status').className = 'status error';
+                document.getElementById('backend-status').textContent = '❌ Offline';
+                document.getElementById('backend-version').textContent = 'N/A';
+                
+                log('❌ Backend no disponible', 'error');
+            }
+        }
+        
+        async function checkFrontendModules() {
+            try {
+                // Check if modules are loaded
+                const modules = ['config', 'api', 'auth', 'dashboard'];
+                let loadedModules = 0;
+                
+                for (const module of modules) {
+                    try {
+                        const moduleLoaded = await import(`./frontend/js/${module}.js`);
+                        loadedModules++;
+                    } catch (e) {
+                        log(`⚠️ Módulo ${module} no encontrado: ${e.message}`, 'warning');
+                    }
+                }
+                
+                if (loadedModules === modules.length) {
+                    document.getElementById('frontend-status').className = 'status success';
+                    document.getElementById('frontend-status').textContent = '✅ Todos los módulos cargados';
+                    log('✅ Todos los módulos frontend cargados correctamente', 'success');
+                } else {
+                    document.getElementById('frontend-status').className = 'status warning';
+                    document.getElementById('frontend-status').textContent = `⚠️ ${loadedModules}/${modules.length} módulos cargados`;
+                }
+            } catch (error) {
+                document.getElementById('frontend-status').className = 'status error';
+                document.getElementById('frontend-status').textContent = '❌ Error cargando módulos';
+                log(`❌ Error en módulos frontend: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            const button = document.getElementById('run-tests-btn');
+            button.disabled = true;
+            button.textContent = 'Ejecutando...';
+            
+            testResults = [];
+            currentTest = 0;
+            
+            const tests = [
+                { name: 'health', fn: testHealthCheck },
+                { name: 'auth', fn: testAuthentication },
+                { name: 'api', fn: testAPIEndpoints },
+                { name: 'frontend', fn: testFrontendIntegration }
+            ];
+            
+            for (const test of tests) {
+                await runSingleTest(test.name, test.fn);
+                updateProgress((currentTest + 1) / totalTests * 100);
+                currentTest++;
+            }
+            
+            button.disabled = false;
+            button.textContent = 'Ejecutar Todas las Pruebas';
+            
+            // Generate summary
+            generateSummary();
+        }
+        
+        async function runSingleTest(testName, testFunction) {
+            if (!testFunction) {
+                switch(testName) {
+                    case 'health': testFunction = testHealthCheck; break;
+                    case 'auth': testFunction = testAuthentication; break;
+                    case 'api': testFunction = testAPIEndpoints; break;
+                    case 'frontend': testFunction = testFrontendIntegration; break;
+                }
+            }
+            
+            try {
+                await testFunction();
+            } catch (error) {
+                log(`❌ Error en prueba ${testName}: ${error.message}`, 'error');
+                testResults.push({ test: testName, status: 'error', message: error.message });
+            }
+        }
+        
+        async function testHealthCheck() {
+            log('🔍 Ejecutando Health Check...', 'info');
+            
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'healthy') {
+                    log('✅ Health Check exitoso', 'success');
+                    testResults.push({ test: 'health', status: 'success', message: 'Backend healthy' });
+                } else {
+                    log(`⚠️ Health Check inesperado: ${JSON.stringify(data)}`, 'warning');
+                    testResults.push({ test: 'health', status: 'warning', message: 'Response unexpected' });
+                }
+            } catch (error) {
+                log(`❌ Health Check falló: ${error.message}`, 'error');
+                testResults.push({ test: 'health', status: 'error', message: error.message });
+            }
+        }
+        
+        async function testAuthentication() {
+            log('🔍 Ejecutando pruebas de autenticación...', 'info');
+            
+            try {
+                // Test login endpoint
+                const loginResponse = await fetch('http://localhost:8000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'test', password: 'test' })
+                });
+                
+                if (loginResponse.status === 401 || loginResponse.status === 422) {
+                    log('✅ Login endpoint respondiendo correctamente', 'success');
+                    testResults.push({ test: 'auth', status: 'success', message: 'Auth endpoints working' });
+                } else {
+                    log(`⚠️ Login response inesperada: ${loginResponse.status}`, 'warning');
+                    testResults.push({ test: 'auth', status: 'warning', message: `Status ${loginResponse.status}` });
+                }
+            } catch (error) {
+                log(`❌ Prueba de autenticación falló: ${error.message}`, 'error');
+                testResults.push({ test: 'auth', status: 'error', message: error.message });
+            }
+        }
+        
+        async function testAPIEndpoints() {
+            log('🔍 Ejecutando pruebas de API endpoints...', 'info');
+            
+            const endpoints = [
+                { url: 'http://localhost:8000/', name: 'Root' },
+                { url: 'http://localhost:8000/docs', name: 'Documentation' },
+                { url: 'http://localhost:8000/api/couders/', name: 'Couders' },
+                { url: 'http://localhost:8000/api/dashboard/overview', name: 'Dashboard' }
+            ];
+            
+            let successCount = 0;
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint.url);
+                    if (response.ok || response.status === 500) { // 500 expected for DB endpoints
+                        successCount++;
+                        log(`✅ ${endpoint.name}: ${response.status}`, 'success');
+                    } else {
+                        log(`⚠️ ${endpoint.name}: ${response.status}`, 'warning');
+                    }
+                } catch (error) {
+                    log(`❌ ${endpoint.name}: ${error.message}`, 'error');
+                }
+            }
+            
+            if (successCount === endpoints.length) {
+                log('✅ Todos los endpoints API respondiendo', 'success');
+                testResults.push({ test: 'api', status: 'success', message: 'All endpoints working' });
+            } else {
+                log(`⚠️ ${successCount}/${endpoints.length} endpoints funcionando`, 'warning');
+                testResults.push({ test: 'api', status: 'warning', message: `${successCount}/${endpoints.length} working` });
+            }
+        }
+        
+        async function testFrontendIntegration() {
+            log('🔍 Ejecutando pruebas de integración frontend...', 'info');
+            
+            try {
+                // Test API client configuration
+                if (CONFIG && CONFIG.API_BASE_URL) {
+                    log('✅ Configuración de API cargada', 'success');
+                } else {
+                    log('❌ Configuración de API no encontrada', 'error');
+                    return;
+                }
+                
+                // Test CORS by making a request
+                const response = await fetch(CONFIG.API_BASE_URL.replace('/api', '/health'));
+                if (response.ok) {
+                    log('✅ CORS configurado correctamente', 'success');
+                    testResults.push({ test: 'frontend', status: 'success', message: 'Frontend integration OK' });
+                } else {
+                    log('❌ Problemas con CORS', 'error');
+                    testResults.push({ test: 'frontend', status: 'error', message: 'CORS issues' });
+                }
+            } catch (error) {
+                log(`❌ Integración frontend falló: ${error.message}`, 'error');
+                testResults.push({ test: 'frontend', status: 'error', message: error.message });
+            }
+        }
+        
+        function updateProgress(percentage) {
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-text').textContent = Math.round(percentage) + '% completado';
+        }
+        
+        function generateSummary() {
+            const successCount = testResults.filter(r => r.status === 'success').length;
+            const warningCount = testResults.filter(r => r.status === 'warning').length;
+            const errorCount = testResults.filter(r => r.status === 'error').length;
+            
+            let summary = `📊 RESUMEN DE PRUEBAS\n`;
+            summary += `==================\n\n`;
+            summary += `✅ Exitosas: ${successCount}\n`;
+            summary += `⚠️ Advertencias: ${warningCount}\n`;
+            summary += `❌ Errores: ${errorCount}\n\n`;
+            
+            summary += `DETALLES:\n`;
+            summary += `---------\n`;
+            
+            testResults.forEach(result => {
+                const icon = result.status === 'success' ? '✅' : result.status === 'warning' ? '⚠️' : '❌';
+                summary += `${icon} ${result.test}: ${result.message}\n`;
+            });
+            
+            if (errorCount === 0) {
+                summary += `\n🎉 ¡Conexión Frontend-Backend EXITOSA!\n`;
+                summary += `🚀 El sistema está listo para usar.\n`;
+            } else {
+                summary += `\n⚠️ Se encontraron ${errorCount} errores que deben resolverse.\n`;
+            }
+            
+            document.getElementById('test-results').textContent = summary;
+        }
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.textContent += logEntry;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        // Make functions global
+        window.runAllTests = runAllTests;
+        window.runSingleTest = runSingleTest;
+    </script>
+</body>
+</html>

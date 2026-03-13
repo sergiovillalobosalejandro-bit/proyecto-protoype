@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import datetime, date
 import re
-from ..models import EstadoCouder, Clan, Corte, Sede
+from ..models import EstadoCouder, Corte, Sede, LegacyClan
 
 class CouderBase(BaseModel):
     cc: str

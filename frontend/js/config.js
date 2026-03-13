@@ -1,7 +1,9 @@
-// Configuration for frontend
+// Configuration for RIWI Interventions System
 const CONFIG = {
     API_BASE_URL: process.env.API_URL || 'http://localhost:8000/api',
-    APP_NAME: 'Sistema de Intervenciones Clínicas',
+    APP_NAME: 'RIWI - Sistema de Intervenciones de Couders',
+    COMPANY_NAME: 'RIWI',
+    SYSTEM_DESCRIPTION: 'Sistema de Registro de Intervenciones de Couders',
     VERSION: '1.0.0'
 };
 

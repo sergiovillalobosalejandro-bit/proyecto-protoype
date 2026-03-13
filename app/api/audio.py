@@ -11,6 +11,8 @@ from ..core.logging import logger
 from ..models import Couder, Usuario, Intervencion
 from ..schemas.intervenciones import AudioRecordResponse, AudioRecordCreate
 
+router = APIRouter()
+
 # Audio storage directory
 AUDIO_STORAGE_DIR = "audio_files"
 os.makedirs(AUDIO_STORAGE_DIR, exist_ok=True)

@@ -1,0 +1,21 @@
+id_specialist,name_specialist,email,password
+1,Derek Foster,cbosch@example.org,hashed_password_123
+2,Andrea Fuller,sibarra@example.org,hashed_password_123
+3,Manuel Cabanillas Fajardo,ejohnson@example.org,hashed_password_123
+4,Carmen Alberto Barrena,juliansmith@example.org,hashed_password_123
+5,Florinda Téllez Malo,sean82@example.net,hashed_password_123
+6,Louis Smith,saavedrafabio@example.org,hashed_password_123
+7,Tyler Macias,hudsonamanda@example.net,hashed_password_123
+8,Larry Robinson,victorianopellicer@example.com,hashed_password_123
+9,Michelle Munoz,aureliano95@example.org,hashed_password_123
+10,Olivia Green,brianascott@example.net,hashed_password_123
+11,Perla Lastra Cañas,debora34@example.net,hashed_password_123
+12,Anthony Davis MD,lilloteobaldo@example.com,hashed_password_123
+13,Jason Wilson,santiagorocamora@example.com,hashed_password_123
+14,John Shelton,celestino94@example.org,hashed_password_123
+15,Rebeca Neira Peral,mejiasusan@example.com,hashed_password_123
+16,Chuy Miranda-Gómez,aureliano00@example.org,hashed_password_123
+17,Andrés Felipe Sarabia,urogers@example.net,hashed_password_123
+18,Gabino Prats-Herrera,fabricio48@example.com,hashed_password_123
+19,Jeffrey Allen,kevindavidson@example.net,hashed_password_123
+20,James York,thall@example.net,hashed_password_123
